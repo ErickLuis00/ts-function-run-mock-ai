@@ -3,6 +3,7 @@
 
 > ⚠️ **IMPORTANT**: This extension requires both an **OpenAI API key** and **Quokka.js** (community plan is sufficient) to function properly. Please ensure you have both configured before use.
 
+![image](https://github.com/user-attachments/assets/41d19bb5-951b-401a-968c-b7ab68c95a31)
 
 A VS Code extension that adds "Generate Mock and Run" buttons above TypeScript functions to quickly test them with Quokka.js. It uses AI to automatically generate mock values for your function parameters based on their types.
 
