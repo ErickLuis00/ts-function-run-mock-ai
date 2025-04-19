@@ -1,12 +1,13 @@
 {
   "name": "mock-function-run-ai",
-  "displayName": "JavaScript/TypeScript Run Button & Mock AI",
+  "displayName": "Run Function Button & Mock AI (JavaScript/TypeScript)",
   "description": "Run JavaScript/TypeScript functions with Quokka and generate realistic mock data using OpenAI",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "publisher": "erickluis",
   "engines": {
     "vscode": "^1.99.0"
   },
+  "icon": "icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/ErickLuis00/ts-function-run-mock-ai"

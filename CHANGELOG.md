@@ -2,6 +2,11 @@
 
 All notable changes to the "Function Run" extension will be documented in this file.
 
+
+## \[1.1.1\] - 2025-04-18
+
+* Added icon
+
 ## \[1.1.0\] - 2025-04-18
 
 ### Added
