@@ -3,6 +3,7 @@
   "displayName": "JavaScript/TypeScript Run Button & Mock AI",
   "description": "Run JavaScript/TypeScript functions with Quokka and generate realistic mock data using OpenAI",
   "version": "1.1.0",
+  "publisher": "erickluis",
   "engines": {
     "vscode": "^1.99.0"
   },
