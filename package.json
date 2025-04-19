@@ -1,7 +1,7 @@
 {
   "name": "mock-function-run-ai",
-  "displayName": "Typescript Function Run & Mock Generator AI",
-  "description": "Run Typescript functions with Quokka and generate realistic mock data using OpenAI",
+  "displayName": "JavaScript/TypeScript Function Run & Mock Generator AI",
+  "description": "Run JavaScript/TypeScript functions with Quokka and generate realistic mock data using OpenAI",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.99.0"
@@ -11,7 +11,9 @@
   ],
   "activationEvents": [
     "onLanguage:typescript",
-    "onLanguage:typescriptreact"
+    "onLanguage:typescriptreact",
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact"
   ],
   "main": "./out/extension.js",
   "contributes": {

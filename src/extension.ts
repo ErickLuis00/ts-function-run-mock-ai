@@ -515,7 +515,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 
 	constructor() {
 		console.log('Initializing CodeLensProvider');
-		// Regex to match functions - specific pattern to match at the beginning of lines
+		// Regex to match functions - updated to better handle both JS and TS functions
 		this.regex = /^\s*(export\s+)?(async\s+)?function\s+([a-zA-Z0-9_]+)/;
 
 		vscode.workspace.onDidChangeConfiguration((_) => {
@@ -689,7 +689,8 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 			return [];
 		}
 
-		if (document.languageId !== 'typescript' && document.languageId !== 'typescriptreact') {
+		if (document.languageId !== 'typescript' && document.languageId !== 'typescriptreact' &&
+			document.languageId !== 'javascript' && document.languageId !== 'javascriptreact') {
 			return [];
 		}
 
@@ -941,6 +942,71 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 	}
 }
 
+/**
+ * Extract parameters from JavaScript functions using regex-based approach
+ */
+function getParametersFromJavaScript(
+	filePath: string,
+	position: number,
+	funcName: string
+): FunctionParameter[] {
+	try {
+		// Read the file content
+		const fileContent = fs.readFileSync(filePath, 'utf8');
+		const lines = fileContent.split('\n');
+
+		// Find the function declaration - could be standard function, arrow function, or method
+		let functionRegex = new RegExp(`function\\s+${funcName}\\s*\\(([^)]*)\\)`, 'g');
+		let arrowFunctionRegex = new RegExp(`(?:const|let|var)\\s+${funcName}\\s*=\\s*(?:async\\s*)?\\(?([^)]*)\\)?\\s*=>`, 'g');
+		let methodRegex = new RegExp(`${funcName}\\s*\\(([^)]*)\\)\\s*{`, 'g');
+
+		let functionMatch = functionRegex.exec(fileContent);
+		let arrowMatch = arrowFunctionRegex.exec(fileContent);
+		let methodMatch = methodRegex.exec(fileContent);
+
+		let paramsStr = '';
+
+		// Use the first match we find
+		if (functionMatch) {
+			paramsStr = functionMatch[1];
+		} else if (arrowMatch) {
+			paramsStr = arrowMatch[1];
+		} else if (methodMatch) {
+			paramsStr = methodMatch[1];
+		} else {
+			console.log(`Could not find function declaration for ${funcName}`);
+			return [];
+		}
+
+		// Parse parameters
+		const params = paramsStr.split(',').map(param => param.trim());
+		const parameters: FunctionParameter[] = [];
+
+		for (const param of params) {
+			if (!param) continue; // Skip empty params
+
+			// Check for default values
+			const [paramName, defaultValueStr] = param.split('=').map(p => p.trim());
+			// Check for destructured params or rest params - for now just use them as-is
+			const cleanParamName = paramName
+				.replace(/^\.\.\./, '') // Handle rest parameters
+				.replace(/^\{|\}$/g, ''); // Handle simple destructuring
+
+			parameters.push({
+				name: cleanParamName,
+				type: null, // No type information available in plain JS
+				defaultValue: defaultValueStr || null,
+				isOptional: !!defaultValueStr || param.includes('=')
+			});
+		}
+
+		return parameters;
+	} catch (error) {
+		console.error('Error extracting parameters from JavaScript:', error);
+		return [];
+	}
+}
+
 // This method is called when your extension is activated
 export async function activate(context: vscode.ExtensionContext) {
 	// Register a command to set or update the OpenAI API key
@@ -979,7 +1045,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	const disposables = [
 		vscode.languages.registerCodeLensProvider(
-			[{ language: 'typescript' }, { language: 'typescriptreact' }],
+			[
+				{ language: 'typescript' },
+				{ language: 'typescriptreact' },
+				{ language: 'javascript' },
+				{ language: 'javascriptreact' }
+			],
 			codelensProvider
 		),
 
@@ -1272,58 +1343,77 @@ export async function activate(context: vscode.ExtensionContext) {
 
 					// If regenerate is true, generate a new function call
 					if (regenerate) {
-						// Extract mandatory parameter types with full type information
-						const params = getParametersWithTypeInfo(
-							document.fileName,
-							position,
-							functionName
-						);
+						// Extract parameters based on file type
+						let params: FunctionParameter[] = [];
+
+						if (document.languageId === 'javascript' || document.languageId === 'javascriptreact') {
+							// Use JavaScript parameter extraction for JS files
+							params = getParametersFromJavaScript(
+								document.fileName,
+								position,
+								functionName
+							);
+						} else {
+							// Use TypeScript parameter extraction for TS files
+							params = getParametersWithTypeInfo(
+								document.fileName,
+								position,
+								functionName
+							);
+						}
 
 						// Create a more detailed type string for the AI
-						// Include full type information, not just the simple type names
 						let fullTypeInfoString = "";
 
 						try {
-							// Get the source file and program
-							const langService = createTsLanguageService(document.fileName);
-							if (langService && langService.getProgram()) {
-								const program = langService.getProgram();
-								if (program) {
-									const typeChecker = program.getTypeChecker();
-
-									// Build detailed type information for parameters
-									const typeDefinitions = params
-										.filter(param => !param.isOptional)
-										.map(param => {
-											// Use the full type if available
-											if (param.typeDetails) {
-												try {
-													// Get full serializable representation of the type
-													const fullType = typeChecker.typeToString(
-														param.typeDetails,
-														undefined,
-														ts.TypeFormatFlags.NoTruncation |
-														ts.TypeFormatFlags.WriteClassExpressionAsTypeLiteral |
-														ts.TypeFormatFlags.UseFullyQualifiedType
-													);
-													return `${param.name}: ${fullType}`;
-												} catch (error) {
-													console.error(`Error getting full type for ${param.name}:`, error);
-													return `${param.name}: ${param.type}`;
-												}
-											}
-											return `${param.name}: ${param.type}`;
-										})
-										.join(', ');
-
-									fullTypeInfoString = typeDefinitions;
-								}
-							} else {
-								// Fallback to simple type strings
+							if (document.languageId === 'javascript' || document.languageId === 'javascriptreact') {
+								// For JavaScript, just use parameter names since we don't have type info
 								fullTypeInfoString = params
 									.filter(param => !param.isOptional)
-									.map(param => `${param.name}: ${param.type}`)
+									.map(param => param.name)
 									.join(', ');
+							} else {
+								// For TypeScript, use the full type information
+								const langService = createTsLanguageService(document.fileName);
+								if (langService && langService.getProgram()) {
+									const program = langService.getProgram();
+									if (program) {
+										const typeChecker = program.getTypeChecker();
+
+										// Build detailed type information for parameters
+										const typeDefinitions = params
+											.filter(param => !param.isOptional)
+											.map(param => {
+												// Use the full type if available
+												if (param.typeDetails) {
+													try {
+														// Get full serializable representation of the type
+														const fullType = typeChecker.typeToString(
+															param.typeDetails,
+															undefined,
+															ts.TypeFormatFlags.NoTruncation |
+															ts.TypeFormatFlags.WriteClassExpressionAsTypeLiteral |
+															ts.TypeFormatFlags.UseFullyQualifiedType
+														);
+														return `${param.name}: ${fullType}`;
+													} catch (error) {
+														console.error(`Error getting full type for ${param.name}:`, error);
+														return `${param.name}: ${param.type}`;
+													}
+												}
+												return `${param.name}: ${param.type}`;
+											})
+											.join(', ');
+
+										fullTypeInfoString = typeDefinitions;
+									}
+								} else {
+									// Fallback to simple type strings
+									fullTypeInfoString = params
+										.filter(param => !param.isOptional)
+										.map(param => `${param.name}: ${param.type}`)
+										.join(', ');
+								}
 							}
 						} catch (error) {
 							console.error('Error creating detailed type information:', error);

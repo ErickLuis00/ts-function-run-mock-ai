@@ -2,7 +2,15 @@
 
 All notable changes to the "Function Run" extension will be documented in this file.
 
-## \[1.0.0\] - 2023-06-15
+## \[1.1.0\] - 2025-04-18
+
+### Added
+
+* Support for JavaScript files (.js and .jsx)
+* JavaScript parameter extraction using regex-based approach
+* Enhanced function detection for JavaScript syntax
+
+## \[1.0.0\] - 2025-04-18
 
 ### Added
 

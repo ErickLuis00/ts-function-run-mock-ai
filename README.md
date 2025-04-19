@@ -1,11 +1,10 @@
-# Easy Run TypeScript Functions with AI Mock Generator
-
+# Easy Run JS/TS Functions with AI Mock Generator
 
 > ⚠️ **IMPORTANT**: This extension requires both an **OpenAI API key** and **Quokka.js** (community plan is sufficient) to function properly. Please ensure you have both configured before use.
 
-![image](https://github.com/user-attachments/assets/41d19bb5-951b-401a-968c-b7ab68c95a31)
+ ![image](https://github.com/user-attachments/assets/41d19bb5-951b-401a-968c-b7ab68c95a31)
 
-A VS Code extension that adds "Generate Mock and Run" buttons above TypeScript functions to quickly test them with Quokka.js. It uses AI to automatically generate mock values for your function parameters based on their types.
+A VS Code extension that adds "Generate Mock and Run" buttons above Javascript/TypeScript functions to quickly test them with Quokka.js. It uses AI to automatically generate mock values for your function parameters based on their types.
 
 ## Features
 
@@ -37,8 +36,7 @@ A VS Code extension that adds "Generate Mock and Run" buttons above TypeScript f
 
 ## How to Use
 
-
-Open any TypeScript file
+Open any JavaScript or TypeScript file
 
 
 1. You'll see a "✨ Generate Mock and Run" button above each function
@@ -64,14 +62,4 @@ This extension contributes the following settings:
 * Complex recursive types might not be fully supported
 * Very large type definitions might be truncated in AI prompts
 
-## Release Notes
 
-### 1.0.0
-
-Initial release:
-
-* AI-powered mock data generation based on function types
-* Seamless integration with Quokka.js
-* Multiple buttons for managing generated code
-
-**Enjoy!**
