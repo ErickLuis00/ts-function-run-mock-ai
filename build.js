@@ -1,7 +1,5 @@
 const { build } = require('esbuild')
 
-const production = process.argv.includes('--production')
-
 async function main() {
     try {
         await build({
@@ -11,18 +9,15 @@ async function main() {
             external: ['vscode'],
             format: 'cjs',
             platform: 'node',
-            minify: production,
-            sourcemap: !production,
-            treeShaking: true,
-            define: {
-                'process.env.NODE_ENV': production ? '"production"' : '"development"'
-            },
-        })
-        console.log('Build complete!')
+            minify: true,
+            sourcemap: true,
+            treeShaking: true
+        });
+        console.log('Build complete!');
     } catch (err) {
-        console.error('Build failed:', err)
-        process.exit(1)
+        console.error('Build failed:', err);
+        process.exit(1);
     }
 }
 
-main() 
+main();

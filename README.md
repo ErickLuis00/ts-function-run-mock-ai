@@ -1,60 +1,76 @@
-# Run TypeScript Function
+# Easy Run TypeScript Functions with AI Mock Generator
 
-A VS Code extension that adds a "Run Function" button above TypeScript functions to quickly test them with Quokka.js.
+
+> ⚠️ **IMPORTANT**: This extension requires both an **OpenAI API key** and **Quokka.js** (community plan is sufficient) to function properly. Please ensure you have both configured before use.
+
+
+A VS Code extension that adds "Generate Mock and Run" buttons above TypeScript functions to quickly test them with Quokka.js. It uses AI to automatically generate mock values for your function parameters based on their types.
 
 ## Features
 
-- Adds a CodeLens button above each TypeScript function
-- When clicked, it automatically:
-  - Adds a `console.log` statement above the function to capture its output
-  - Runs the file with Quokka.js to see the results instantly
+* Adds CodeLens buttons above each TypeScript function
+* When clicked, it automatically:
+  * Analyzes your function signature and parameter types
+  * Uses AI to generate appropriate mock values based on those types
+  * Creates a function call with realistic data
+  * Runs the file with Quokka.js to see the results instantly
+* Supports complex TypeScript types including interfaces, arrays, and nested objects
+* Maintains generated code with markers for easy management
 
 ## Requirements
 
-- Visual Studio Code 1.99.0 or higher
-- [Quokka.js](https://marketplace.visualstudio.com/items?itemName=WallabyJs.quokka-vscode) extension must be installed
+* Visual Studio Code 1.99.0 or higher
+* [Quokka.js](https://marketplace.visualstudio.com/items?itemName=WallabyJs.quokka-vscode) extension must be installed
+* **OpenAI API key (for AI-powered mock data generation)**
+
+## Setup
+
+
+1. Install the extension from the VS Code Marketplace
+2. Install the Quokka.js extension if you haven't already
+3. Configure your OpenAI API key:
+   * Open Settings (File > Preferences > Settings)
+   * Search for "function-run"
+   * Enter your OpenAI API key in the "OpenAI API Key" field
+   * Or use the command "Function Run: Set OpenAI API Key" from the command palette
 
 ## How to Use
 
-1. Open any TypeScript file
-2. You'll see a "► Run Function" button above each function
-3. Click the button to run the function with Quokka
-4. The function will be executed and its result will be displayed in the Quokka output
+
+Open any TypeScript file
+
+
+1. You'll see a "✨ Generate Mock and Run" button above each function
+2. Click the button to:
+   * Generate parameter values based on your function's signature
+   * Run the function with Quokka for instant results
+3. Once generated, you'll also see:
+   * "▶ Run Function" - Run without regenerating parameters
+   * "🗑 Remove Function Call" - Clean up generated code
+   * "⏹ Stop Run" - Stop Quokka execution (when running)
 
 ## Extension Settings
 
 This extension contributes the following settings:
 
 * `function-run.enableCodeLens`: Enable/disable the CodeLens for running functions
+* `function-run.openAIApiKey`: Your OpenAI API key for AI-powered mock generation
+* `function-run.useProxy`: Enable if you need to use a proxy for OpenAI API calls
+* `function-run.proxyUrl`: Proxy URL to use when useProxy is enabled
 
 ## Known Issues
 
-- Requires functions to be runnable without parameters or with default parameters
-- May not detect complex function patterns with unusual formatting
+* Complex recursive types might not be fully supported
+* Very large type definitions might be truncated in AI prompts
 
 ## Release Notes
 
-### 0.0.1
+### 1.0.0
 
-Initial release
+Initial release:
 
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+* AI-powered mock data generation based on function types
+* Seamless integration with Quokka.js
+* Multiple buttons for managing generated code
 
 **Enjoy!**
