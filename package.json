@@ -1,6 +1,6 @@
 {
   "name": "mock-function-run-ai",
-  "displayName": "JavaScript/TypeScript Function Run & Mock Generator AI",
+  "displayName": "JavaScript/TypeScript Run Button & Mock AI",
   "description": "Run JavaScript/TypeScript functions with Quokka and generate realistic mock data using OpenAI",
   "version": "0.0.1",
   "engines": {
